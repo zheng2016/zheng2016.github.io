@@ -30,9 +30,18 @@
         <section id="main-content">
 
           <h3>
-          <a id="support-or-contact" class="anchor" href="#support-or-contact" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Support or Contact</h3>
-          <p>Having trouble with Pages? Check out our <a href="./content/1.html">documentation</a> or <a href="https://github.com/contact">contact support</a> and we’ll help you sort it out.</p>
-
+          <a id="support-or-contact" class="anchor" href="#support-or-contact" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>WEB安全开发规范</h3>
+          <p>
+          所有对Web应用的攻击都要传入有害的参数，所以必须对所有用户产生的输入进行校验。
+          用户输入是指来自text、password、textareas或file表单域的数据；必须假定所有的用户输入都是不可信的，并对它们进行合法性校验。
+          不能依赖于客户端校验，必须使用服务端代码对输入数据进行最终校验。
+          如果输入为数字参数则必须进行数字型判断。
+          如果输入只允许包含某些特定的字符或字符的组合，则使用白名单进行输入校验。
+          如果输入为字符串参数则必须进行字符型合法性判断。
+          校验输入数据的长度。
+          校验输入数据的范围。
+          </p>
+          
       </section>
 
       <aside id="sidebar">
