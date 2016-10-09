@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>WEB安全开发规范</title>
+  <meta name="description" content="参数校验">
+
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="http://localhost:4000/jekyll/update/2016/10/09/welcome-to-jekyll.html">
+  <link rel="alternate" type="application/rss+xml" title="zheng2016" href="/feed.xml">
+  
+  
+</head>
+
+
+  <body>
+
+    <header class="site-header" role="banner">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/">zheng2016</a>
+
+    <nav class="site-nav">
+      <span class="menu-icon">
+        <svg viewBox="0 0 18 15" width="18px" height="15px">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+      </span>
+
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">About</a>
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">WEB安全开发规范</h1>
+    <p class="post-meta"><time datetime="2016-10-09T15:39:51+08:00" itemprop="datePublished">Oct 9, 2016</time></p>
+  </header>
+
+  <div class="post-content" itemprop="articleBody">
+    <p>参数校验</p>
+
+<p>所有对Web应用的攻击都要传入有害的参数，所以必须对所有用户产生的输入进行校验。</p>
+
+<p>用户输入是指来自text、password、textareas或file表单域的数据；必须假定所有的用户输入都是不可信的，并对它们进行合法性校验。
+不能依赖于客户端校验，必须使用服务端代码对输入数据进行最终校验。
+如果输入为数字参数则必须进行数字型判断。
+如果输入只允许包含某些特定的字符或字符的组合，则使用白名单进行输入校验。
+如果输入为字符串参数则必须进行字符型合法性判断。
+校验输入数据的长度。
+校验输入数据的范围。
+1、常用过滤函数</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>intval()、filter_var()、trim()、addslashes()、stripslashes()、strip_tags()、htmlspecialchars()、escapeshellarg()、
+escapeshellcmd()...
+</code></pre>
+</div>
+
+<p>2、Yii的rules验证规则</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>required: 必须值验证属性
+[['字段名'],required,'requiredValue'=&gt;'必填值','message'=&gt;'提示信息'];//确保特性不为空. 
+
+email:    邮箱验证
+['email','email'];//确保特性的值是一个有效的电邮地址. 
+
+match:    正则验证
+[['字段名'],match,'pattern'=&gt;'正则表达式','message'=&gt;'提示信息'];//确保特性匹配一个正则表达式.      
+[['字段名'],match,'not'=&gt;ture,'pattern'=&gt;'正则表达式','message'=&gt;'提示信息'];//正则取反. 
+
+url:      网址
+['website','url','defaultScheme'=&gt;'http'];//确保特性是一个有效的路径. 
+
+captcha:  验证码
+['verificationCode','captcha'];//确保特性的值等于CAPTCHA显示出来的验证码. 
+
+safe:     安全
+['description','safe'];//属性标志为在批量赋值时是安全的.
+
+compare:  比较
+['age','compare','compareValue'=&gt;30,'operator'=&gt;'&gt;='];//compareValue(比较常量值)、operator(比较操作符)
+
+default:  默认值
+['age','default','value'=&gt;null];//为特性指派了一个默认值. 
+
+exist:    存在
+['username','exist'];//确保属性值存在于指定的数据表字段中. 
+
+file:     文件
+['primaryImage','file','extensions'=&gt;['png', 'jpg', 'gif'],'maxSize'=&gt;1024*1024*1024];//确保特性包含了一个上传文件的名称. 
+
+filter:   滤镜
+[['username','email'],'filter','filter'=&gt;'trim','skipOnArray'=&gt;true];//使用一个filter转换属性. 
+
+in:       范围
+['level','in','range'=&gt;[1, 2, 3]];//确保特性出现在一个预订的值列表里. 
+
+unique:   唯一性
+['username','unique']//确保特性在数据表字段中是唯一的. 
+
+integer:  整数
+['age','integer'];//验证是否是整型值.
+
+number:   数字
+['salary','number'];//验证是否是数字.
+
+double:   双精度浮点型
+['salary','double'];//验证是否为双精度浮点型.
+
+date:     日期
+[['from','to'],'date'];//验证是否为日期类型.
+
+string:   字符串
+['username','string','length'=&gt;[4, 24]];//验证是否为一个字符串.
+
+boolean:  布尔值
+['字段名','boolean','trueValue'=&gt;true,'falseValue'=&gt;false,'strict'=&gt;true]; //验证是否为一个布尔值.
+
+</code></pre>
+</div>
+
+<p>3、代码示例</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>public function actionImport()
+{
+    $result = Constants::$WEB_SUCCESS_RT;
+    try{
+        $passVerify = $this-&gt;verifyParam($_REQUEST, array(
+            array('ip, host_id, user_name', 'required'),
+            array('user_email', 'email'),
+            array('port', 'numerical', 'allowEmpty' =&gt; true),
+            array('protocol', 'in', 'range' =&gt; array('http', 'https'), 'allowEmpty' =&gt; true),
+            array('ip', 'match', 'pattern' =&gt; '/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}
+                |1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/')
+        ));
+
+        $server_ip   = $this-&gt;getParam('ip');
+        $host_id     = intval($this-&gt;getParam('host_id'));
+        $user_name   = $this-&gt;getParam('user_name');
+        $user_email  = $this-&gt;getParam('user_email');
+        $server_port = $this-&gt;getParam('port', 443);
+        $protocol    = $this-&gt;getParam('protocol', 'http');
+        $remark      = $this-&gt;getParam('remark', '');
+
+        //省略
+
+    } catch (Exception $e) {
+        $result = $e;
+    }
+    $this-&gt;renderJson($result);
+}
+
+</code></pre>
+</div>
+
+<p>防止SQL注入</p>
+
+<p>1、原理：应用程序在向后台数据库传递sql查询时，如果为攻击者提供了影响该查询的能力，就会发生SQL注入。</p>
+
+<p>2、漏洞防范方法</p>
+
+<p>必须避免在编写操作数据库代码时，直接将外部可控的参数拼接到SQL语句中不经过任何过滤处理直接放入数据库引擎中进行执行。
+要求对于动态构建的SQL语句，必须用可选参数占位符来拼接SQL语句，并进行参数绑定。
+这样会先进行SQL预处理，参数绑定时才将这些占位符替换为实际的参数，从而防止SQL注入攻击。</p>
+
+<p>3、代码示例</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>//正确
+public function getHostInfoById($host_id)
+{
+    $bind_val = array(':id' =&gt; $host_id);
+    $sql      = sprintf('SELECT * FROM %s WHERE id = :id', $this-&gt;_table);
+    return $this-&gt;queryRow($sql, $bind_val);
+}
+
+//错误
+public function getHostInfoById($host_id)
+{
+    $sql = sprintf('SELECT * FROM %s WHERE id = '. $host_id, $this-&gt;_table);
+    return $this-&gt;queryRow($sql);
+}
+</code></pre>
+</div>
+
+<p>跨站脚本攻击 XSS</p>
+
+<p>原理：攻击者在页面注入恶意代码，访问者访问页面时，浏览器执行攻击者注入的恶意代码，从而达到攻击访问者的目的。
+成因：对非预期输入的信任，应用程序收到不可信数据时，没有进行适当的验证和转义，直接输出到页面上。
+危害：劫持用户会话、窃取用户身份、钓鱼等。</p>
+
+<p>1、漏洞防范方法</p>
+
+<p>① 将重要的cookie标记为http only, 这样的话Javascript 中的document.cookie语句就不能获取到cookie了。
+② 只允许用户输入我们期望的数据。例如：年龄的textbox中，只允许用户输入数字。而数字之外的字符都过滤掉。
+③ 对数据进行Html Encode 处理。
+④ 过滤或移除特殊的Html标签， 例如: script, iframe , &lt; for &lt;, &gt; for &gt;, &amp;quot for等。
+⑤ 过滤JavaScript 事件的标签。例如 “onclick=”, “onfocus” 等等。</p>
+
+<p>2、Yii中的XSS防范</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>Profile of 
+&lt;?php echo CHtml::encode($user-&gt;name);?&gt;
+</code></pre>
+</div>
+
+<p>3、常用过滤函数</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>htmlspecialchars()、htmlentities()、urlencode()...
+</code></pre>
+</div>
+<p>目录穿越攻击</p>
+
+<p>原理：编码的时候没有检查读取或加载的文件是否有权限及是否为指定目录下的可访问文件，造成读取或加载未经许可的内容。</p>
+
+<p>1、如下代码，如果没有检测判断$_GET[‘file’]的值，则可以加载非/www/test目录下的文件。</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>&lt;?php
+if(isset($_GET['file'])){
+  @include("/www/test/".$_GET['file']);
+}
+?&gt;
+</code></pre>
+</div>
+
+<p>2、漏洞防范方法</p>
+
+<p>① 不要轻易直接使用用户提交上来的数据，检测数据中是否存在“../”字符串，如果存在则有可能为目录穿越攻击，这时提醒错误或者删除“../”字符。
+② 在php.ini文件中配置open_basedir参数，这个设置可以允许读取或加载的目录路径。
+   php_admin_value open_basedir “/www/dir1/:/www/dir2/:/www/dir3/”
+   来设置。（win主机下使用“;”来分割多个目录，其他系统下使用“:”来分割多个目录）
+③ 关闭php参数allow_url_fopen及allow_url_include的配置，防止加载远程的文件。
+④ 对提交的文件名参数，进行basename、realpath函数进行处理，确保不会出现“./”、“../”等特殊字符。</p>
+
+<p>CSRF跨站请求伪造</p>
+
+<p>1、原理：利用被害者的身份去发送请求。</p>
+
+<p>2、漏洞防范方法</p>
+
+<p>① 验证码
+② Referer Check
+③ Anti CSRF Token
+3、Yii的CSRF验证</p>
+
+<p>在Yii框架中，为了防止csrf攻击，封装了CSRF令牌验证。
+配置在主配置文件main.php中:</p>
+
+<p><code class="highlighter-rouge">'components'=&gt;array(
+    'request'=&gt;array(
+        'class'=&gt;'application.source.integration.yii.QEntHttpRequest',//扩展原HttpRequest，在validateCsrfToken()中还验证了referer。
+        'enableCsrfValidation'=&gt;true,//开启CSRF的验证，在validateCsrfToken()中比对post参数中的YII_CSRF_TOKEN与cookie中的是否相同。
+        'noCsrfValidationRoutes'=&gt;array(//无需进行验证的controller，在QEntHttpRequest类的normalizeRequest()中实现。
+            'api/tss',
+            'api/node',
+            'api/sgcc',
+            'api/imsservice',
+            'api/leak/import',
+            'api/terminal',
+            'login',
+            'tools/cert/upload',
+            'api/mdm',
+            'api/upgrade',
+            'api/bcm',
+            'oauth',
+            'nac/config',
+            'oauth',
+            'nac/node',
+            'api/pcm'
+        )
+    )
+ )</code></p>
+
+<p>将enableCsrfValidation设置为true之后，使用Yii表单生成页面的时候，如果表单的提交方式为POST，都会在页面中添加一个隐藏字段:</p>
+
+<div style="display:none">
+    <input type="hidden" value="a429b6c0f4468db23a5661d1682db537fe2672c7" name="YII_CSRF_TOKEN" />
+</div>
+<p>自己写的表单需要手动添加隐藏字段:</p>
+
+<p><input type="hidden" value="&lt;?php echo Yii::app()-&gt;request-&gt;getCsrfToken(); ?&gt;" name="YII_CSRF_TOKEN" />
+用户在提交表单的同时，将该字段提交给服务器端，Yii框架会将请求中提交过来的隐藏字段和客户端Cookie中的YII_CSRF_TOKEN值进行比较。
+相同则通过继续执行，不相同则会抛出400异常：”The CSRF token could not be verified.”。</p>
+
+<p>注意⚠️⚠️：Only validate POST requests，所以增删改都要用post的方式来请求。</p>
+
+<p>代码执行攻击</p>
+
+<p>1、原理：应用程序本身过滤不严，用户通过请求将代码注入到应用程序中执行，相当于产生了Web后门。</p>
+
+<p>2、主要由以下函数的参数过滤不严格导致</p>
+
+<p><code class="highlighter-rouge">eval()、assert()、preg_replace()、call_user_func()、call_user_func_array()、array_map()</code></p>
+
+<p>3、漏洞防范方法</p>
+
+<p>对参数进行白名单过滤，在可预测满足正常业务的参数情况下，这是非常实用的方式。
+白名单可以完全固定为指定参数，也可以结合正则表达式来进行白名单限制。</p>
+
+<p>命令执行攻击</p>
+
+<p>1、原理：应用程序有时需要调用一些执行系统命令的函数，当用户能控制这些函数的参数时，就可以将恶意系统命令拼接到正常命令中，从而造成命令执行攻击。</p>
+
+<p>2、主要由以下函数的参数过滤不严格导致(另外反引号(`)也可以执行命令，不过实际上这种方式也是调用的shell_exec()函数)</p>
+
+<p><code class="highlighter-rouge">system()、exec()、shell_exec()、passthru()、pcntl_exec()、popen()、proc_popen()</code></p>
+
+<p>3、漏洞防范方法</p>
+
+<p>① 使用PHP自带的命令防注入函数，escapeshellcmd()和escapeshellarg()。
+② 对命令执行函数的参数做白名单限制。</p>
+
+<p>推荐阅读</p>
+
+<p>《白帽子讲Web安全》
+《代码审计 企业级Web代码安全架构》</p>
+
+  </div>
+
+  
+</article>
+
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">zheng2016</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li>
+            
+              zheng2016
+            
+            </li>
+            
+            <li><a href="mailto:your-email@domain.com">your-email@domain.com</a></li>
+            
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-2">
+        <ul class="social-media-list">
+          
+          <li>
+            <a href="https://github.com/jekyll"><span class="icon icon--github"><svg viewBox="0 0 16 16" width="16px" height="16px"><path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/></svg>
+</span><span class="username">jekyll</span></a>
+
+          </li>
+          
+
+          
+          <li>
+            <a href="https://twitter.com/jekyllrb"><span class="icon icon--twitter"><svg viewBox="0 0 16 16" width="16px" height="16px"><path fill="#828282" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27 c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767 c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206 C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271 c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469 c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"/></svg>
+</span><span class="username">jekyllrb</span></a>
+
+          </li>
+          
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-3">
+        <p>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.
+</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

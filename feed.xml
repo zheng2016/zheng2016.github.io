@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8"?><?xml-stylesheet type="text/xml" href="http://localhost:4000/feed.xslt.xml"?><feed xmlns="http://www.w3.org/2005/Atom"><generator uri="http://jekyllrb.com" version="3.3.0">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2016-10-09T16:18:50+08:00</updated><id>http://localhost:4000//</id><title type="html">zheng2016</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.
+</subtitle><entry><title type="html">WEB安全开发规范</title><link href="http://localhost:4000/jekyll/update/2016/10/09/welcome-to-jekyll.html" rel="alternate" type="text/html" title="WEB安全开发规范" /><published>2016-10-09T15:39:51+08:00</published><updated>2016-10-09T15:39:51+08:00</updated><id>http://localhost:4000/jekyll/update/2016/10/09/welcome-to-jekyll</id><content type="html" xml:base="http://localhost:4000/jekyll/update/2016/10/09/welcome-to-jekyll.html">&lt;p&gt;参数校验&lt;/p&gt;
+
+&lt;p&gt;所有对Web应用的攻击都要传入有害的参数，所以必须对所有用户产生的输入进行校验。&lt;/p&gt;
+
+&lt;p&gt;用户输入是指来自text、password、textareas或file表单域的数据；必须假定所有的用户输入都是不可信的，并对它们进行合法性校验。
+不能依赖于客户端校验，必须使用服务端代码对输入数据进行最终校验。
+如果输入为数字参数则必须进行数字型判断。
+如果输入只允许包含某些特定的字符或字符的组合，则使用白名单进行输入校验。
+如果输入为字符串参数则必须进行字符型合法性判断。
+校验输入数据的长度。
+校验输入数据的范围。
+1、常用过滤函数&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;intval()、filter_var()、trim()、addslashes()、stripslashes()、strip_tags()、htmlspecialchars()、escapeshellarg()、
+escapeshellcmd()...
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;2、Yii的rules验证规则&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;required: 必须值验证属性
+[['字段名'],required,'requiredValue'=&amp;gt;'必填值','message'=&amp;gt;'提示信息'];//确保特性不为空. 
+
+email:    邮箱验证
+['email','email'];//确保特性的值是一个有效的电邮地址. 
+
+match:    正则验证
+[['字段名'],match,'pattern'=&amp;gt;'正则表达式','message'=&amp;gt;'提示信息'];//确保特性匹配一个正则表达式.      
+[['字段名'],match,'not'=&amp;gt;ture,'pattern'=&amp;gt;'正则表达式','message'=&amp;gt;'提示信息'];//正则取反. 
+
+url:      网址
+['website','url','defaultScheme'=&amp;gt;'http'];//确保特性是一个有效的路径. 
+
+captcha:  验证码
+['verificationCode','captcha'];//确保特性的值等于CAPTCHA显示出来的验证码. 
+
+safe:     安全
+['description','safe'];//属性标志为在批量赋值时是安全的.
+
+compare:  比较
+['age','compare','compareValue'=&amp;gt;30,'operator'=&amp;gt;'&amp;gt;='];//compareValue(比较常量值)、operator(比较操作符)
+
+default:  默认值
+['age','default','value'=&amp;gt;null];//为特性指派了一个默认值. 
+
+exist:    存在
+['username','exist'];//确保属性值存在于指定的数据表字段中. 
+
+file:     文件
+['primaryImage','file','extensions'=&amp;gt;['png', 'jpg', 'gif'],'maxSize'=&amp;gt;1024*1024*1024];//确保特性包含了一个上传文件的名称. 
+
+filter:   滤镜
+[['username','email'],'filter','filter'=&amp;gt;'trim','skipOnArray'=&amp;gt;true];//使用一个filter转换属性. 
+
+in:       范围
+['level','in','range'=&amp;gt;[1, 2, 3]];//确保特性出现在一个预订的值列表里. 
+
+unique:   唯一性
+['username','unique']//确保特性在数据表字段中是唯一的. 
+
+integer:  整数
+['age','integer'];//验证是否是整型值.
+
+number:   数字
+['salary','number'];//验证是否是数字.
+
+double:   双精度浮点型
+['salary','double'];//验证是否为双精度浮点型.
+
+date:     日期
+[['from','to'],'date'];//验证是否为日期类型.
+
+string:   字符串
+['username','string','length'=&amp;gt;[4, 24]];//验证是否为一个字符串.
+
+boolean:  布尔值
+['字段名','boolean','trueValue'=&amp;gt;true,'falseValue'=&amp;gt;false,'strict'=&amp;gt;true]; //验证是否为一个布尔值.
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;3、代码示例&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;public function actionImport()
+{
+    $result = Constants::$WEB_SUCCESS_RT;
+    try{
+        $passVerify = $this-&amp;gt;verifyParam($_REQUEST, array(
+            array('ip, host_id, user_name', 'required'),
+            array('user_email', 'email'),
+            array('port', 'numerical', 'allowEmpty' =&amp;gt; true),
+            array('protocol', 'in', 'range' =&amp;gt; array('http', 'https'), 'allowEmpty' =&amp;gt; true),
+            array('ip', 'match', 'pattern' =&amp;gt; '/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}
+                |1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/')
+        ));
+
+        $server_ip   = $this-&amp;gt;getParam('ip');
+        $host_id     = intval($this-&amp;gt;getParam('host_id'));
+        $user_name   = $this-&amp;gt;getParam('user_name');
+        $user_email  = $this-&amp;gt;getParam('user_email');
+        $server_port = $this-&amp;gt;getParam('port', 443);
+        $protocol    = $this-&amp;gt;getParam('protocol', 'http');
+        $remark      = $this-&amp;gt;getParam('remark', '');
+
+        //省略
+
+    } catch (Exception $e) {
+        $result = $e;
+    }
+    $this-&amp;gt;renderJson($result);
+}
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;防止SQL注入&lt;/p&gt;
+
+&lt;p&gt;1、原理：应用程序在向后台数据库传递sql查询时，如果为攻击者提供了影响该查询的能力，就会发生SQL注入。&lt;/p&gt;
+
+&lt;p&gt;2、漏洞防范方法&lt;/p&gt;
+
+&lt;p&gt;必须避免在编写操作数据库代码时，直接将外部可控的参数拼接到SQL语句中不经过任何过滤处理直接放入数据库引擎中进行执行。
+要求对于动态构建的SQL语句，必须用可选参数占位符来拼接SQL语句，并进行参数绑定。
+这样会先进行SQL预处理，参数绑定时才将这些占位符替换为实际的参数，从而防止SQL注入攻击。&lt;/p&gt;
+
+&lt;p&gt;3、代码示例&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;//正确
+public function getHostInfoById($host_id)
+{
+    $bind_val = array(':id' =&amp;gt; $host_id);
+    $sql      = sprintf('SELECT * FROM %s WHERE id = :id', $this-&amp;gt;_table);
+    return $this-&amp;gt;queryRow($sql, $bind_val);
+}
+
+//错误
+public function getHostInfoById($host_id)
+{
+    $sql = sprintf('SELECT * FROM %s WHERE id = '. $host_id, $this-&amp;gt;_table);
+    return $this-&amp;gt;queryRow($sql);
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;跨站脚本攻击 XSS&lt;/p&gt;
+
+&lt;p&gt;原理：攻击者在页面注入恶意代码，访问者访问页面时，浏览器执行攻击者注入的恶意代码，从而达到攻击访问者的目的。
+成因：对非预期输入的信任，应用程序收到不可信数据时，没有进行适当的验证和转义，直接输出到页面上。
+危害：劫持用户会话、窃取用户身份、钓鱼等。&lt;/p&gt;
+
+&lt;p&gt;1、漏洞防范方法&lt;/p&gt;
+
+&lt;p&gt;① 将重要的cookie标记为http only, 这样的话Javascript 中的document.cookie语句就不能获取到cookie了。
+② 只允许用户输入我们期望的数据。例如：年龄的textbox中，只允许用户输入数字。而数字之外的字符都过滤掉。
+③ 对数据进行Html Encode 处理。
+④ 过滤或移除特殊的Html标签， 例如: script, iframe , &amp;lt; for &amp;lt;, &amp;gt; for &amp;gt;, &amp;amp;quot for等。
+⑤ 过滤JavaScript 事件的标签。例如 “onclick=”, “onfocus” 等等。&lt;/p&gt;
+
+&lt;p&gt;2、Yii中的XSS防范&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Profile of 
+&amp;lt;?php echo CHtml::encode($user-&amp;gt;name);?&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;3、常用过滤函数&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;htmlspecialchars()、htmlentities()、urlencode()...
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;目录穿越攻击&lt;/p&gt;
+
+&lt;p&gt;原理：编码的时候没有检查读取或加载的文件是否有权限及是否为指定目录下的可访问文件，造成读取或加载未经许可的内容。&lt;/p&gt;
+
+&lt;p&gt;1、如下代码，如果没有检测判断$_GET[‘file’]的值，则可以加载非/www/test目录下的文件。&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;lt;?php
+if(isset($_GET['file'])){
+  @include(&quot;/www/test/&quot;.$_GET['file']);
+}
+?&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;2、漏洞防范方法&lt;/p&gt;
+
+&lt;p&gt;① 不要轻易直接使用用户提交上来的数据，检测数据中是否存在“../”字符串，如果存在则有可能为目录穿越攻击，这时提醒错误或者删除“../”字符。
+② 在php.ini文件中配置open_basedir参数，这个设置可以允许读取或加载的目录路径。
+   php_admin_value open_basedir “/www/dir1/:/www/dir2/:/www/dir3/”
+   来设置。（win主机下使用“;”来分割多个目录，其他系统下使用“:”来分割多个目录）
+③ 关闭php参数allow_url_fopen及allow_url_include的配置，防止加载远程的文件。
+④ 对提交的文件名参数，进行basename、realpath函数进行处理，确保不会出现“./”、“../”等特殊字符。&lt;/p&gt;
+
+&lt;p&gt;CSRF跨站请求伪造&lt;/p&gt;
+
+&lt;p&gt;1、原理：利用被害者的身份去发送请求。&lt;/p&gt;
+
+&lt;p&gt;2、漏洞防范方法&lt;/p&gt;
+
+&lt;p&gt;① 验证码
+② Referer Check
+③ Anti CSRF Token
+3、Yii的CSRF验证&lt;/p&gt;
+
+&lt;p&gt;在Yii框架中，为了防止csrf攻击，封装了CSRF令牌验证。
+配置在主配置文件main.php中:&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;'components'=&amp;gt;array(
+    'request'=&amp;gt;array(
+        'class'=&amp;gt;'application.source.integration.yii.QEntHttpRequest',//扩展原HttpRequest，在validateCsrfToken()中还验证了referer。
+        'enableCsrfValidation'=&amp;gt;true,//开启CSRF的验证，在validateCsrfToken()中比对post参数中的YII_CSRF_TOKEN与cookie中的是否相同。
+        'noCsrfValidationRoutes'=&amp;gt;array(//无需进行验证的controller，在QEntHttpRequest类的normalizeRequest()中实现。
+            'api/tss',
+            'api/node',
+            'api/sgcc',
+            'api/imsservice',
+            'api/leak/import',
+            'api/terminal',
+            'login',
+            'tools/cert/upload',
+            'api/mdm',
+            'api/upgrade',
+            'api/bcm',
+            'oauth',
+            'nac/config',
+            'oauth',
+            'nac/node',
+            'api/pcm'
+        )
+    )
+ )&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;将enableCsrfValidation设置为true之后，使用Yii表单生成页面的时候，如果表单的提交方式为POST，都会在页面中添加一个隐藏字段:&lt;/p&gt;
+
+&lt;div style=&quot;display:none&quot;&gt;
+    &lt;input type=&quot;hidden&quot; value=&quot;a429b6c0f4468db23a5661d1682db537fe2672c7&quot; name=&quot;YII_CSRF_TOKEN&quot; /&gt;
+&lt;/div&gt;
+&lt;p&gt;自己写的表单需要手动添加隐藏字段:&lt;/p&gt;
+
+&lt;p&gt;&lt;input type=&quot;hidden&quot; value=&quot;&amp;lt;?php echo Yii::app()-&amp;gt;request-&amp;gt;getCsrfToken(); ?&amp;gt;&quot; name=&quot;YII_CSRF_TOKEN&quot; /&gt;
+用户在提交表单的同时，将该字段提交给服务器端，Yii框架会将请求中提交过来的隐藏字段和客户端Cookie中的YII_CSRF_TOKEN值进行比较。
+相同则通过继续执行，不相同则会抛出400异常：”The CSRF token could not be verified.”。&lt;/p&gt;
+
+&lt;p&gt;注意⚠️⚠️：Only validate POST requests，所以增删改都要用post的方式来请求。&lt;/p&gt;
+
+&lt;p&gt;代码执行攻击&lt;/p&gt;
+
+&lt;p&gt;1、原理：应用程序本身过滤不严，用户通过请求将代码注入到应用程序中执行，相当于产生了Web后门。&lt;/p&gt;
+
+&lt;p&gt;2、主要由以下函数的参数过滤不严格导致&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;eval()、assert()、preg_replace()、call_user_func()、call_user_func_array()、array_map()&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;3、漏洞防范方法&lt;/p&gt;
+
+&lt;p&gt;对参数进行白名单过滤，在可预测满足正常业务的参数情况下，这是非常实用的方式。
+白名单可以完全固定为指定参数，也可以结合正则表达式来进行白名单限制。&lt;/p&gt;
+
+&lt;p&gt;命令执行攻击&lt;/p&gt;
+
+&lt;p&gt;1、原理：应用程序有时需要调用一些执行系统命令的函数，当用户能控制这些函数的参数时，就可以将恶意系统命令拼接到正常命令中，从而造成命令执行攻击。&lt;/p&gt;
+
+&lt;p&gt;2、主要由以下函数的参数过滤不严格导致(另外反引号(`)也可以执行命令，不过实际上这种方式也是调用的shell_exec()函数)&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;system()、exec()、shell_exec()、passthru()、pcntl_exec()、popen()、proc_popen()&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;3、漏洞防范方法&lt;/p&gt;
+
+&lt;p&gt;① 使用PHP自带的命令防注入函数，escapeshellcmd()和escapeshellarg()。
+② 对命令执行函数的参数做白名单限制。&lt;/p&gt;
+
+&lt;p&gt;推荐阅读&lt;/p&gt;
+
+&lt;p&gt;《白帽子讲Web安全》
+《代码审计 企业级Web代码安全架构》&lt;/p&gt;</content><summary type="html">参数校验</summary></entry></feed>
