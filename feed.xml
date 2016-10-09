@@ -1,5 +1,58 @@
-<?xml version="1.0" encoding="utf-8"?><?xml-stylesheet type="text/xml" href="http://localhost:4000/feed.xslt.xml"?><feed xmlns="http://www.w3.org/2005/Atom"><generator uri="http://jekyllrb.com" version="3.3.0">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2016-10-09T16:18:50+08:00</updated><id>http://localhost:4000//</id><title type="html">zheng2016</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.
-</subtitle><entry><title type="html">WEB安全开发规范</title><link href="http://localhost:4000/jekyll/update/2016/10/09/welcome-to-jekyll.html" rel="alternate" type="text/html" title="WEB安全开发规范" /><published>2016-10-09T15:39:51+08:00</published><updated>2016-10-09T15:39:51+08:00</updated><id>http://localhost:4000/jekyll/update/2016/10/09/welcome-to-jekyll</id><content type="html" xml:base="http://localhost:4000/jekyll/update/2016/10/09/welcome-to-jekyll.html">&lt;p&gt;参数校验&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><?xml-stylesheet type="text/xml" href="http://localhost:4000/feed.xslt.xml"?><feed xmlns="http://www.w3.org/2005/Atom"><generator uri="http://jekyllrb.com" version="3.3.0">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2016-10-09T16:53:02+08:00</updated><id>http://localhost:4000//</id><title type="html">zheng2016</title><subtitle></subtitle><entry><title type="html">正则引擎流派</title><link href="http://localhost:4000/jekyll/update/2016/10/09/zz.html" rel="alternate" type="text/html" title="正则引擎流派" /><published>2016-10-09T15:39:51+08:00</published><updated>2016-10-09T15:39:51+08:00</updated><id>http://localhost:4000/jekyll/update/2016/10/09/zz</id><content type="html" xml:base="http://localhost:4000/jekyll/update/2016/10/09/zz.html">&lt;p&gt;DFA :（deterministic finite automation）
+   确定有限状态自动机
+   awk（很多时候）,egrep（很多时候）,flex,lex,MySQL,Procmail&lt;/p&gt;
+
+&lt;p&gt;NFA :不确定有限状态自动机
+   awk,egrep,flex,lex,MySQL,Procmail&lt;/p&gt;
+
+&lt;p&gt;POSIX NFA:遵守了POSIX协议的NFA mawk,Mortice Kern Systems’ utilities,GNU&lt;/p&gt;
+
+&lt;p&gt;DFA/NFA混合
+   EmacsGNU awk,GNU grep/egrep,Tcl&lt;/p&gt;
+
+&lt;p&gt;这里的非确定和确定均是对被匹配的目标文本中的字符来说的。&lt;/p&gt;
+
+&lt;p&gt;在NFA中，每个字符在一次匹配中即使被检测通过，也不能确定他是否真正通过，因为NFA中会出现回溯！甚至不止一两次。&lt;/p&gt;
+
+&lt;p&gt;而在DFA中，由于是目标文本主导，所有字符只检测一遍，到文本结束后，过就是过，不过就不过。这也就是”确定“这个说法的原因。&lt;/p&gt;</content><summary type="html">DFA :（deterministic finite automation）
+   确定有限状态自动机
+   awk（很多时候）,egrep（很多时候）,flex,lex,MySQL,Procmail</summary></entry><entry><title type="html">web常见问题排查</title><link href="http://localhost:4000/jekyll/update/2016/10/09/wen-wenti-paicha.html" rel="alternate" type="text/html" title="web常见问题排查" /><published>2016-10-09T15:39:51+08:00</published><updated>2016-10-09T15:39:51+08:00</updated><id>http://localhost:4000/jekyll/update/2016/10/09/wen-wenti-paicha</id><content type="html" xml:base="http://localhost:4000/jekyll/update/2016/10/09/wen-wenti-paicha.html">&lt;h1 id=&quot;section&quot;&gt;一般排查方法&lt;/h1&gt;
+
+&lt;p&gt;检查error_log&lt;/p&gt;
+
+&lt;p&gt;检查access_log&lt;/p&gt;
+
+&lt;p&gt;strace 查看系统调用&lt;/p&gt;
+
+&lt;p&gt;tcpdump 分析网络状况&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;blockquote&gt;
+    &lt;p&gt;根据不同问题，要选择合适的方法，最简单的方法还是查看error_log，有些怪异的问题，从error_log中中能找到蛛丝马迹。慢请求相关的问题，可通过access_log记录请求时间。
+如果log中没有什么有用信息，可以尝试分析下系统调用，或网络。程序本身的问题，可能需要gdb调试。&lt;/p&gt;
+  &lt;/blockquote&gt;
+&lt;/blockquote&gt;
+
+&lt;h1 id=&quot;errorlog-&quot;&gt;error_log 排查&lt;/h1&gt;
+
+&lt;blockquote&gt;
+  &lt;blockquote&gt;
+    &lt;p&gt;error_log 提供了异常丰富的信息，比如nginx处理请求出错，网络连接出错，后端返回出错，系统调用出错等各种错误信息，如果是线下调试，则可以开启debug信息，便于调试排查&lt;/p&gt;
+  &lt;/blockquote&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;connect,write,read timeout 等网络超时错误&lt;/p&gt;
+
+&lt;p&gt;Permission denied ，File not found等系统调用错误&lt;/p&gt;
+
+&lt;p&gt;HTTP 状态码400,499,500等对应的错误&lt;/p&gt;
+
+&lt;h2 id=&quot;errorlog&quot;&gt;查看error_log&lt;/h2&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;2014/09/24 10:28:14 [crit] 12930#0: *1 open() &quot;/data/nginx/proxy_temp/1/00/0000000001&quot; failed (13: Permission denied) while reading upstream, client: 127.0.0.1, 
+server: localhost, request: &quot;GET /normal/rand10m.html HTTP/1.1&quot;, upstream: &quot;http://127.0.0.1:8805//rand10m.html&quot;, host: &quot;localhost:8804&quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;</content><summary type="html">一般排查方法</summary></entry><entry><title type="html">WEB安全开发规范</title><link href="http://localhost:4000/jekyll/update/2016/10/09/web-anquan.html" rel="alternate" type="text/html" title="WEB安全开发规范" /><published>2016-10-09T15:39:51+08:00</published><updated>2016-10-09T15:39:51+08:00</updated><id>http://localhost:4000/jekyll/update/2016/10/09/web-anquan</id><content type="html" xml:base="http://localhost:4000/jekyll/update/2016/10/09/web-anquan.html">&lt;p&gt;参数校验&lt;/p&gt;
 
 &lt;p&gt;所有对Web应用的攻击都要传入有害的参数，所以必须对所有用户产生的输入进行校验。&lt;/p&gt;
 

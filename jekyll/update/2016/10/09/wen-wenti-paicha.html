@@ -6,11 +6,11 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>About</title>
-  <meta name="description" content="">
+  <title>web常见问题排查</title>
+  <meta name="description" content="一般排查方法">
 
   <link rel="stylesheet" href="/assets/main.css">
-  <link rel="canonical" href="http://localhost:4000/about/">
+  <link rel="canonical" href="http://localhost:4000/jekyll/update/2016/10/09/wen-wenti-paicha.html">
   <link rel="alternate" type="application/rss+xml" title="zheng2016" href="/feed.xml">
   
   
@@ -58,17 +58,56 @@
 
     <main class="page-content" aria-label="Content">
       <div class="wrapper">
-        <article class="post">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
 
   <header class="post-header">
-    <h1 class="post-title">About</h1>
+    <h1 class="post-title" itemprop="name headline">web常见问题排查</h1>
+    <p class="post-meta"><time datetime="2016-10-09T15:39:51+08:00" itemprop="datePublished">Oct 9, 2016</time></p>
   </header>
 
-  <div class="post-content">
-    
+  <div class="post-content" itemprop="articleBody">
+    <h1 id="section">一般排查方法</h1>
+
+<p>检查error_log</p>
+
+<p>检查access_log</p>
+
+<p>strace 查看系统调用</p>
+
+<p>tcpdump 分析网络状况</p>
+
+<blockquote>
+  <blockquote>
+    <p>根据不同问题，要选择合适的方法，最简单的方法还是查看error_log，有些怪异的问题，从error_log中中能找到蛛丝马迹。慢请求相关的问题，可通过access_log记录请求时间。
+如果log中没有什么有用信息，可以尝试分析下系统调用，或网络。程序本身的问题，可能需要gdb调试。</p>
+  </blockquote>
+</blockquote>
+
+<h1 id="errorlog-">error_log 排查</h1>
+
+<blockquote>
+  <blockquote>
+    <p>error_log 提供了异常丰富的信息，比如nginx处理请求出错，网络连接出错，后端返回出错，系统调用出错等各种错误信息，如果是线下调试，则可以开启debug信息，便于调试排查</p>
+  </blockquote>
+</blockquote>
+
+<p>connect,write,read timeout 等网络超时错误</p>
+
+<p>Permission denied ，File not found等系统调用错误</p>
+
+<p>HTTP 状态码400,499,500等对应的错误</p>
+
+<h2 id="errorlog">查看error_log</h2>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>2014/09/24 10:28:14 [crit] 12930#0: *1 open() "/data/nginx/proxy_temp/1/00/0000000001" failed (13: Permission denied) while reading upstream, client: 127.0.0.1, 
+server: localhost, request: "GET /normal/rand10m.html HTTP/1.1", upstream: "http://127.0.0.1:8805//rand10m.html", host: "localhost:8804"
+</code></pre>
+</div>
+
 
   </div>
 
+  
 </article>
 
       </div>

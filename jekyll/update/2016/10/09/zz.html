@@ -6,11 +6,11 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>About</title>
-  <meta name="description" content="">
+  <title>正则引擎流派</title>
+  <meta name="description" content="DFA :（deterministic finite automation） 确定有限状态自动机 awk（很多时候）,egrep（很多时候）,flex,lex,MySQL,Procmail">
 
   <link rel="stylesheet" href="/assets/main.css">
-  <link rel="canonical" href="http://localhost:4000/about/">
+  <link rel="canonical" href="http://localhost:4000/jekyll/update/2016/10/09/zz.html">
   <link rel="alternate" type="application/rss+xml" title="zheng2016" href="/feed.xml">
   
   
@@ -58,17 +58,35 @@
 
     <main class="page-content" aria-label="Content">
       <div class="wrapper">
-        <article class="post">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
 
   <header class="post-header">
-    <h1 class="post-title">About</h1>
+    <h1 class="post-title" itemprop="name headline">正则引擎流派</h1>
+    <p class="post-meta"><time datetime="2016-10-09T15:39:51+08:00" itemprop="datePublished">Oct 9, 2016</time></p>
   </header>
 
-  <div class="post-content">
-    
+  <div class="post-content" itemprop="articleBody">
+    <p>DFA :（deterministic finite automation）
+   确定有限状态自动机
+   awk（很多时候）,egrep（很多时候）,flex,lex,MySQL,Procmail</p>
+
+<p>NFA :不确定有限状态自动机
+   awk,egrep,flex,lex,MySQL,Procmail</p>
+
+<p>POSIX NFA:遵守了POSIX协议的NFA mawk,Mortice Kern Systems’ utilities,GNU</p>
+
+<p>DFA/NFA混合
+   EmacsGNU awk,GNU grep/egrep,Tcl</p>
+
+<p>这里的非确定和确定均是对被匹配的目标文本中的字符来说的。</p>
+
+<p>在NFA中，每个字符在一次匹配中即使被检测通过，也不能确定他是否真正通过，因为NFA中会出现回溯！甚至不止一两次。</p>
+
+<p>而在DFA中，由于是目标文本主导，所有字符只检测一遍，到文本结束后，过就是过，不过就不过。这也就是”确定“这个说法的原因。</p>
 
   </div>
 
+  
 </article>
 
       </div>
